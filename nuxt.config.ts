@@ -1,0 +1,37 @@
+// https://nuxt.com/docs/api/configuration/nuxt-config
+export default defineNuxtConfig({
+  compatibilityDate: '2025-05-15',
+  devtools: { enabled: true },
+
+  vite: {
+    server: {
+      allowedHosts: ['courses.test']
+    }
+  },
+
+  modules: ['@sidebase/nuxt-auth'],
+
+  auth: {
+    isEnabled: true,
+    disableServerSideAuth: false,
+    originEnvKey: 'AUTH_ORIGIN',
+    baseURL: 'http://localhost:3000/api/auth',
+    provider: {
+      type: 'authjs',
+      trustHost: false,
+      defaultProvider: 'github',
+      addDefaultCallbackUrl: true
+    },
+    sessionRefresh: {
+      enablePeriodically: true,
+      enableOnWindowFocus: true,
+    }
+  },
+
+  runtimeConfig: {
+    authSecret: process.env.AUTH_SECRET,
+    authOrigin: process.env.AUTH_ORIGIN,
+    authGithubClientId: process.env.NUXT_GITHUB_CLIENT_ID,
+    authGithubClientSecret: process.env.NUXT_GITHUB_CLIENT_SECRET
+  }
+})
