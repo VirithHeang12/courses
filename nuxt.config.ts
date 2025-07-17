@@ -3,7 +3,7 @@ export default defineNuxtConfig({
 	compatibilityDate: '2025-05-15',
 	devtools: { enabled: true },
 
-	modules: ['@sidebase/nuxt-auth', '@prisma/nuxt'],
+	modules: ['@sidebase/nuxt-auth', '@prisma/nuxt', '@prisma/nuxt'],
 
 	auth: {
 		isEnabled: true,

@@ -1,22 +1,23 @@
 <template>
 	<header>
 		<NuxtLink to="/about">About</NuxtLink>
-		<NuxtLink v-if="isAuthenticated" to="/profile">Profile</NuxtLink>
+		<NuxtLink to="/profile">Profile</NuxtLink>
 		<button v-if="!isAuthenticated" @click="signInHandler">Login</button>
 		<button v-if="isAuthenticated" @click="signOutHandler">Logout</button>
-
+		{{ status }}
 	</header>
 	<div>
 		<NuxtPage />
 	</div>
 </template>
 
-
 <script setup>
 
 	const { signOut, status, signIn } = useAuth()
 
-	const isAuthenticated = computed(() => status === 'authenticated')
+	const isAuthenticated = computed(() => {
+		return status.value === 'authenticated'
+	})
 
 	/**
 	 * Sign out the user

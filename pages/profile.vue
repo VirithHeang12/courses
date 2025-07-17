@@ -9,4 +9,15 @@
 		auth: true
 	})
 
+	const { data } = await useAsyncData('user', () => {
+		return $fetch('/api/profile/get-profile', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	})
+
+	console.log('user', data.value)
+
 </script>
