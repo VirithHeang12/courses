@@ -1,26 +1,43 @@
 <template>
-  <div>
-    <template v-for="provider in providers">
-      <button @click="signInHandler(provider.id)">Sign in with {{ provider.name }}</button>
-    </template>
+	<header>
+		<NuxtLink to="/about">About</NuxtLink>
+		<NuxtLink v-if="isAuthenticated" to="/profile">Profile</NuxtLink>
+		<button v-if="!isAuthenticated" @click="signInHandler">Login</button>
+		<button v-if="isAuthenticated" @click="signOutHandler">Logout</button>
 
-    {{ status }}
-    {{ data }}
-
-    <button @click="signOutHandler">Sign out</button>
-  </div>
+	</header>
+	<div>
+		<NuxtPage />
+	</div>
 </template>
 
+
 <script setup>
-  const { signIn, status, data, signOut, getProviders } = useAuth()
 
-  const providers = await getProviders()
+	const { signOut, status, signIn } = useAuth()
 
-  const signInHandler = async (providerId) => {
-    await signIn(providerId)
-  }
+	const isAuthenticated = computed(() => status === 'authenticated')
 
-  const signOutHandler = async () => {
-    await signOut()
-  }
+	/**
+	 * Sign out the user
+	 * 
+	 * @returns {void}
+	 */
+	function signOutHandler() {
+		signOut({
+			callbackUrl: '/'
+		})
+	}
+
+	/**
+	 * Sign in the user
+	 * 
+	 * @returns {void}
+	 */
+	function signInHandler() {
+		signIn({
+			providerId: 'google',
+		})
+
+	}
 </script>

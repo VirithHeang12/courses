@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
+const isProd = process.env.NODE_ENV === 'production'
 
 export default NuxtAuthHandler({
 	// Use Prisma adapter for NextAuth.js
@@ -26,5 +27,23 @@ export default NuxtAuthHandler({
 	],
 	session: {
 		strategy: 'database'
-	}
+	},
+	pages: {
+		signIn: '/auth/login',
+		signOut: '/auth/logout',
+		error: '/auth/error',
+	},
+	cookies: {
+		pkceCodeVerifier: {
+			name: `${isProd ? '__Secure-' : ''}next-auth.pkce.code_verifier`,
+			options: {
+				httpOnly: true,
+				sameSite: 'lax',
+				path: '/',
+				secure: isProd,
+				maxAge: 900,
+			},
+		},
+	},
+
 })
