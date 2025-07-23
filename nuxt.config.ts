@@ -3,26 +3,14 @@ export default defineNuxtConfig({
 	compatibilityDate: '2025-05-15',
 	devtools: { enabled: true },
 
-	modules: ['@sidebase/nuxt-auth', '@prisma/nuxt', '@prisma/nuxt'],
+	modules: [
+		'@prisma/nuxt',
+		'@nuxtjs/supabase',
+	],
 
-	auth: {
-		isEnabled: true,
-		disableServerSideAuth: false,
-		originEnvKey: 'AUTH_ORIGIN',
-		baseURL: 'http://localhost:3000/api/auth',
-		provider: {
-			type: 'authjs',
-			trustHost: false,
-			defaultProvider: 'google',
-			addDefaultCallbackUrl: true,
-		},
-		sessionRefresh: {
-			enablePeriodically: true,
-			enableOnWindowFocus: true,
-		},
-		globalAppMiddleware: {
-			isEnabled: true,
-		},
+	supabase: {
+		url: process.env.SUPABASE_URL,
+		key: process.env.SUPABASE_KEY,
 	},
 
 	runtimeConfig: {
@@ -33,6 +21,6 @@ export default defineNuxtConfig({
 		authGithubClientSecret: process.env.NUXT_GITHUB_CLIENT_SECRET,
 		// Google
 		authGoogleClientId: process.env.NUXT_GOOGLE_CLIENT_ID,
-		authGoogleClientSecret: process.env.NUXT_GOOGLE_CLIENT_SECRET
+		authGoogleClientSecret: process.env.NUXT_GOOGLE_CLIENT_SECRET,
 	}
 })

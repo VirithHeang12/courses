@@ -5,10 +5,6 @@
 </template>
 
 <script setup>
-	definePageMeta({
-		auth: true
-	})
-
 	const { data } = await useAsyncData('user', () => {
 		return $fetch('/api/profile/get-profile', {
 			method: 'GET',
