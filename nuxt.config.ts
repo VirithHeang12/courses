@@ -6,11 +6,18 @@ export default defineNuxtConfig({
 	modules: [
 		'@prisma/nuxt',
 		'@nuxtjs/supabase',
+		'@nuxtjs/tailwindcss',
 	],
 
 	supabase: {
 		url: process.env.SUPABASE_URL,
 		key: process.env.SUPABASE_KEY,
+		redirectOptions: {
+			login: '/login',
+			callback: '/confirm',
+			include: ['/about'],
+			saveRedirectToCookie: true,
+		},
 	},
 
 	runtimeConfig: {

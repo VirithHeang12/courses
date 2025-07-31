@@ -1,16 +1,6 @@
 import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-	// const session = await getServerSession(event)
-
-	// if (!session) {
-	// 	return createError({
-	// 		statusCode: 401,
-	// 		statusMessage: 'Unauthorized',
-	// 		message: 'You must be logged in to access videos.'
-	// 	});
-	// }
-
 	try {
 		const supabase = await serverSupabaseClient(event)
 
@@ -24,9 +14,8 @@ export default defineEventHandler(async (event) => {
 
 		const { data, error } = await supabase.storage
 			.from('nuxt-courses')
-			.list('videos/', {
+			.list('videos', {
 				limit: 10,
-				offset: 0
 			})
 
 		if (error) {
@@ -37,7 +26,15 @@ export default defineEventHandler(async (event) => {
 			})
 		}
 
-		const videos = data?.map(file => {
+		if (!data || data.length === 0) {
+			return {
+				success: true,
+				data: [],
+				message: 'No videos found in the videos folder'
+			}
+		}
+
+		const videosData = data.map(file => {
 			const { data: { publicUrl } } = supabase.storage
 				.from('nuxt-courses')
 				.getPublicUrl(`videos/${file.name}`)
@@ -46,15 +43,17 @@ export default defineEventHandler(async (event) => {
 				id: file.id,
 				name: file.name,
 				url: publicUrl,
-				size: file.metadata?.size,
-				lastModified: file.updated_at,
-				createdAt: file.created_at
+				mimeType: file.metadata?.mimetype
 			}
-		}) || []
+		})
+
+		// filter out files that are not videos
+		const videos = videosData.filter(file => file.mimeType?.startsWith('video/'))
 
 		return {
 			success: true,
-			data: videos
+			data: videos,
+			count: videos.length
 		}
 	} catch (error) {
 		return createError({

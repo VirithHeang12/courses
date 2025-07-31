@@ -9,10 +9,6 @@
 </template>
 
 <script setup>
-	definePageMeta({
-		auth: false
-	})
-
 	/**
 	 * Create customer  
 	 *
@@ -28,8 +24,6 @@
 				'Content-Type': 'application/json'
 			}
 		})
-
-		console.log('Customer created:', data)
 	}
 
 </script>

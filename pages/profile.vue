@@ -14,6 +14,4 @@
 		})
 	})
 
-	console.log('user', data.value)
-
 </script>
