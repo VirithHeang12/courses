@@ -45,6 +45,9 @@ model User {
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
+  coursesCreated Course[]  @relation("CourseInstructor")
+  enrollments   Enrollment[]
+  reviews       CourseReview[]
 }
 
 model VerificationToken {
@@ -58,4 +61,83 @@ model VerificationToken {
 model Customer {
 	id 			String    @id @default(cuid())
 	name 		String
+}
+
+model Course {
+  id              String    @id @default(cuid())
+  title           String
+  slug            String    @unique
+  description     String?   @db.Text
+  shortDescription String?
+  videoUrl        String    // URL to video in Supabase Storage
+  videoStorageId  String?   // Storage file ID from Supabase
+  thumbnailUrl    String?   // URL to thumbnail image
+  duration        Int?      // Duration in seconds
+  level           CourseLevel @default(BEGINNER)
+  category        String?
+  tags            String[]  // Array of tags
+  price           Decimal?  @db.Decimal(10,2)
+  isPublished     Boolean   @default(false)
+  isFeatured      Boolean   @default(false)
+  enrollmentCount Int       @default(0)
+  rating          Decimal?  @db.Decimal(2,1) // Average rating out of 5
+  ratingCount     Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  publishedAt     DateTime?
+  
+  // Relations
+  instructorId    String
+  instructor      User      @relation("CourseInstructor", fields: [instructorId], references: [id], onDelete: Cascade)
+  enrollments     Enrollment[]
+  reviews         CourseReview[]
+
+  @@index([slug])
+  @@index([category])
+  @@index([level])
+  @@index([isPublished])
+  @@index([isFeatured])
+  @@index([createdAt])
+}
+
+model Enrollment {
+  id              String    @id @default(cuid())
+  userId          String
+  courseId        String
+  enrolledAt      DateTime  @default(now())
+  completedAt     DateTime?
+  progress        Int       @default(0) // Progress percentage 0-100
+  lastAccessedAt  DateTime  @default(now())
+  
+  // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course          Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+}
+
+model CourseReview {
+  id          String    @id @default(cuid())
+  userId      String
+  courseId    String
+  rating      Int       // 1-5 stars
+  comment     String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, courseId])
+  @@index([courseId])
+  @@index([rating])
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
 }
