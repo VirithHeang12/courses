@@ -1,16 +1,15 @@
 <template>
 	<div>
-		Profile Page
+		Profile Page {{ data }}
 	</div>
 </template>
 
 <script setup>
+	const user = useSupabaseUser()
+
 	const { data } = await useAsyncData('user', () => {
 		return $fetch('/api/profile/get-profile', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json'
-			}
+			headers: useRequestHeaders(['cookie'])
 		})
 	})
 

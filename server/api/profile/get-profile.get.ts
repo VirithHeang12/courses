@@ -1,14 +1,27 @@
 import prisma from "~/lib/prisma";
+import { serverSupabaseUser } from '#supabase/server'
+
 
 export default defineEventHandler(async (event) => {
+	const supabaseUserServer = await serverSupabaseUser(event)
+
 	const user = await prisma.user.findFirst({
 		where: {
-			name: {
-				startsWith: 'Heang'
-			}
+			email: supabaseUserServer?.email || ''
 		},
 		orderBy: {
 			createdAt: 'desc'
+		},
+		include: {
+			enrollments: {
+				include: {
+					course: {
+						include: {
+							instructor: true
+						}
+					}
+				}
+			}
 		}
 	})
 
